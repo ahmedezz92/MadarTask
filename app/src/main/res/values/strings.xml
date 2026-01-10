@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">MadarTask</string>
+    <string name="label_name">"Name:"</string>
+    <string name="label_age">"Age:"</string>
+    <string name="label_jobtitle">"Job Title:"</string>
+    <string name="label_gender">Gender:</string>
+    <string name="label_save">Save</string>
+    <string name="label_viewusers">View Users</string>
+    <string name="label_userdetails">User Details</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_age">Age</string>
+    <string name="hint_jobtitle">Job title</string>
+    <string name="hint_gender">Gender</string>
+    <string name="label_users">Users</string>
+    <string name="msg_saved_succesfully">User has been saved successfully</string>
+    <string name="msg_error">Please fill all fields</string>
+    <string name="label_male">Male</string>
+    <string name="label_female">Female</string>
+</resources>
