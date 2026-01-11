@@ -16,4 +16,5 @@
     <string name="msg_error">Please fill all fields</string>
     <string name="label_male">Male</string>
     <string name="label_female">Female</string>
+    <string name="user_saved_successfully">User Saved Successfully</string>
 </resources>

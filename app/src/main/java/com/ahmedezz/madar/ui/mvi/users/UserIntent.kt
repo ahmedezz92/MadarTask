@@ -7,4 +7,6 @@ sealed class UserIntent {
     data class SelectGender(val gender: String): UserIntent()
     object SaveUser: UserIntent()
     object LoadUsers: UserIntent()
+    object ResetSuccessFlag: UserIntent()
+
 }

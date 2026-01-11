@@ -11,7 +11,8 @@ data class UserUiState(
     val ageError: String? = null,
     val jobError: String? = null,
     val genderError: String? = null,
-    val userList: List<User> = emptyList()
+    val userList: List<User> = emptyList(),
+    val showSuccess: Boolean = false,
 ){
     val isValid: Boolean
         get() = nameError == null &&

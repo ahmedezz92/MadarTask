@@ -1,5 +1,6 @@
 package com.ahmedezz.madar.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,21 +18,30 @@ import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmedezz.madar.ui.mvi.users.UserIntent
+import com.ahmedezz.madar.ui.mvi.users.UserUiEvent
 import com.ahmedezz.madar.ui.mvi.users.UserUiState
+import com.example.madar.R
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.emptyFlow
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,9 +51,10 @@ fun InputScreenContent(
     onIntent: (UserIntent) -> Unit,
     onNavigateToDisplay: () -> Unit,
 ) {
-    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     val genders = listOf("Male", "Female")
+    val context = LocalContext.current
+    val userSavedMessage = stringResource(R.string.user_saved_successfully)
 
     Scaffold(
         topBar = {
@@ -144,6 +155,14 @@ fun InputScreenContent(
             }
         }
     }
+
+    LaunchedEffect(state.showSuccess) {
+        if (state.showSuccess) {
+            Toast.makeText(context, userSavedMessage, Toast.LENGTH_SHORT).show()
+            onIntent(UserIntent.ResetSuccessFlag)
+        }
+    }
+
 }
 
 @Preview(
@@ -162,7 +181,7 @@ fun InputScreenPreview() {
                 gender = "Male"
             ),
             onIntent = {},
-            onNavigateToDisplay = {}
+            onNavigateToDisplay = {},
         )
     }
 }

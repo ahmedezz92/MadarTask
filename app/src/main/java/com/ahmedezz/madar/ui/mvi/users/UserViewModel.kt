@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.ahmedezz.madar.domain.usecases.user.UserUseCases
 import com.ahmedezz.madar.data.local.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -14,31 +16,46 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val useCases: UserUseCases
-): ViewModel() {
+    private val useCases: UserUseCases,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(UserUiState())
     val uiState: StateFlow<UserUiState> = _uiState
 
-    init { onIntent(UserIntent.LoadUsers) }
+    init {
+        onIntent(UserIntent.LoadUsers)
+    }
 
     fun onIntent(intent: UserIntent) {
         when (intent) {
             is UserIntent.EnterName ->
-                _uiState.update { validate(it.copy(name = intent.name)) }
+                _uiState.update { it.copy(name = intent.name) }
 
             is UserIntent.EnterAge ->
-                _uiState.update { validate(it.copy(age = intent.age)) }
+                _uiState.update { it.copy(age = intent.age) }
 
             is UserIntent.EnterJob ->
-                _uiState.update { validate(it.copy(jobTitle = intent.jobTitle)) }
+                _uiState.update { it.copy(jobTitle = intent.jobTitle) }
 
             is UserIntent.SelectGender ->
-                _uiState.update { validate(it.copy(gender = intent.gender)) }
+                _uiState.update { it.copy(gender = intent.gender) }
 
-            is UserIntent.SaveUser -> saveUser()
+            is UserIntent.SaveUser -> validateAndSave()
             is UserIntent.LoadUsers -> loadUsers()
+            UserIntent.ResetSuccessFlag -> _uiState.update { it.copy(showSuccess = false) }
         }
     }
+
+    private fun validateAndSave() {
+        val currentState = _uiState.value
+        val validatedState = validate(currentState)
+
+        _uiState.value = validatedState
+
+        if (validatedState.isValid()) {
+            saveUser()
+        }
+    }
+
     private fun validate(state: UserUiState): UserUiState {
         val ageInt = state.age.toIntOrNull()
 
@@ -69,8 +86,14 @@ class UserViewModel @Inject constructor(
                 gender = state.gender
             )
             useCases.insertUser(user)
+            _uiState.value = state.copy(
+                showSuccess = true,
+                name = "",
+                age = "",
+                jobTitle = "",
+                gender = ""
+            )
             onIntent(UserIntent.LoadUsers)
-            _uiState.value = UserUiState()
         }
     }
 
@@ -82,4 +105,12 @@ class UserViewModel @Inject constructor(
             }
         }
     }
+
+    private fun UserUiState.isValid(): Boolean {
+        return nameError == null &&
+                ageError == null &&
+                jobError == null &&
+                genderError == null
+    }
+
 }

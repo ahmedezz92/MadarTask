@@ -23,9 +23,11 @@ fun AppNavigation(
             val state by viewModel.uiState.collectAsState()
 
             InputScreenContent(
-                state = state, onIntent = viewModel::onIntent, onNavigateToDisplay = {
+                state = state, onIntent = viewModel::onIntent,
+                onNavigateToDisplay = {
                     navController.navigate("display")
-                })
+                },
+            )
         }
 
         composable("display") {
